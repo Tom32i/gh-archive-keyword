@@ -89,6 +89,8 @@ db: var/docker.build
 	@$(PHP_RUN) bin/console -v -n doctrine:migration:migrate --allow-no-migration
 	@$(call log_success,Done)
 
+test: db-test unit-test func-test ## Run complete test suite
+
 .PHONY: db-test
 db-test: var/docker.build
 	@$(call log,Preparing test db ...)
