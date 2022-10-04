@@ -98,7 +98,7 @@ class EventControllerTest extends WebTestCase
             <<<JSON
               {
                 "comment": "short"
-                
+
             }
             JSON,
             <<<JSON
