@@ -48,7 +48,7 @@ class ImportGitHubEventsCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $date = new \DateTimeImmutable($input->getArgument('date'));
         $separator = "\n";
-        $clearEvery = 50;
+        $clearEvery = 100;
 
         $io->title("Importing events for {$date->format('Y-m-d H:00')} :");
 

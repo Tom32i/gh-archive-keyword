@@ -20,7 +20,6 @@ class SearchController
 {
     public function __construct(
         private EventRepository $eventRepository,
-        private ReadEventRepository $repository,
         private SerializerInterface $serializer,
     ) {
     }
@@ -40,6 +39,7 @@ class SearchController
         $countByType = $this->eventRepository->countByType($search->date, $search->keyword);
         $total = $this->eventRepository->countAll($search->date, $search->keyword);
         $latest = $this->eventRepository->getLatest($search->date, $search->keyword);
+        $stats = $this->eventRepository->statsByTypePerHour($search->date, $search->keyword);
 
         return new JsonResponse([
             'meta' => [
@@ -50,7 +50,7 @@ class SearchController
             ],
             'data' => [
                 'events' => $this->serializer->normalize($latest),
-                //'stats' => $this->repository->statsByTypePerHour($search)
+                'stats' => $stats
             ]
         ]);
     }

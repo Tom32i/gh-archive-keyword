@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Event;
+use App\Entity\EventType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
@@ -67,7 +68,29 @@ class EventRepository extends ServiceEntityRepository
             ->getSingleScalarResult() === 1;
     }
 
-    public function getQueryBuilder(\DateTimeInterface $date, string $keyword): QueryBuilder
+    public function statsByTypePerHour(\DateTimeInterface $date, string $keyword): array
+    {
+        $results = $this->getQueryBuilder($date, $keyword)
+            ->select('EXTRACT(hour FROM event.createAt) as hour, event.type, SUM(event.count) as count')
+            ->groupBy('event.type')
+            ->addGroupBy('hour')
+            ->getQuery()
+            ->getResult();
+
+        $data = array_fill(0, 24, [
+            EventType::COMMIT => 0,
+            EventType::PULL_REQUEST => 0,
+            EventType::COMMENT => 0
+        ]);
+
+        foreach ($results as $stat) {
+            $data[(int) $stat['hour']][$stat['type']] = $stat['count'];
+        }
+
+        return $data;
+    }
+
+    private function getQueryBuilder(\DateTimeInterface $date, string $keyword): QueryBuilder
     {
         return $this->createQueryBuilder('event')
             ->andWhere('DATE(event.createAt) = :date')

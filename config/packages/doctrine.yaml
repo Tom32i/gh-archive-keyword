@@ -22,6 +22,7 @@ doctrine:
             string_functions:
                 DATE: DoctrineExtensions\Query\Mysql\Date
                 CAST: DoctrineExtensions\Query\Mysql\Cast
+                EXTRACT: DoctrineExtensions\Query\Mysql\Extract
 
 when@test:
     doctrine:
