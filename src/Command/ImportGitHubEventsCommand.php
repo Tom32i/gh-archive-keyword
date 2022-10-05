@@ -38,7 +38,8 @@ class ImportGitHubEventsCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('date', InputArgument::OPTIONAL, 'Your last name?', '')
+            ->addArgument('date', InputArgument::OPTIONAL, 'Date and time', '')
+            ->setHelp('php -d memory_limit=512M bin/console app:import-github-events "2015-01-01 12:00"')
         ;
     }
 
@@ -47,32 +48,30 @@ class ImportGitHubEventsCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $date = new \DateTimeImmutable($input->getArgument('date'));
         $separator = "\n";
-        $flushEvery = 10;
+        $clearEvery = 50;
 
         $io->title("Importing events for {$date->format('Y-m-d H:00')} :");
 
         $content = $this->getJsonContent($date);
 
-        if (!$content) {
+        if ($content === null) {
             $io->error('Could not fetch content form GHArchive.');
 
             return static::FAILURE;
         }
 
         $total = substr_count($content, $separator);
-        $part = strtok($content, $separator);
+        $parts = explode($separator, $content);
         $insert = 0;
 
-        $io->progressStart($total);
+        unset($content);
 
-        while ($part !== false) {
-            if ($this->parseEvent($part)) {
-                if ($insert++ % $flushEvery == 0) {
-                    $this->entityManager->clear();
-                }
+        $io->progressStart(count($parts));
+
+        while ($part = array_shift($parts)) {
+            if ($this->parseEvent($part) && ($insert++ % $clearEvery == 0)) {
+                $this->entityManager->clear();
             }
-
-            $part = strtok($separator);
             $io->progressAdvance();
         }
 
@@ -96,13 +95,13 @@ class ImportGitHubEventsCommand extends Command
 
     private function parseEvent(string $value): bool
     {
-        $event = $this->serializer->deserialize($value, Event::class, 'json');
-
-        if ($event === null) {
+        try {
+            $event = $this->serializer->deserialize($value, Event::class, 'json');
+        } catch (\Exception $exception) {
             return false;
         }
 
-        if ($this->eventRepository->countById($event->id()) > 0) {
+        if ($this->eventRepository->exists($event->getId())) {
             return false;
         }
 

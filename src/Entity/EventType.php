@@ -16,7 +16,7 @@ class EventType extends AbstractEnumType
         self::PULL_REQUEST => 'Pull Request',
     ];
 
-    public static function getFromGHArchive(string $value)
+    public static function getFromGHArchive(string $value): string
     {
         switch ($value) {
             case 'PullRequestEvent':
@@ -30,7 +30,7 @@ class EventType extends AbstractEnumType
                 return self::COMMIT;
 
             default:
-                return null;
+                throw new \Exception("Unsuported type \"$value\".");
         }
     }
 }

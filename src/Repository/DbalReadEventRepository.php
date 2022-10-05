@@ -55,7 +55,7 @@ SQL;
             GROUP BY TYPE, EXTRACT(hour from create_at)
 SQL;
 
-        $stats = $this->connection->fetchAll($sql, [
+        $stats = $this->connection->fetchAllAssociative($sql, [
             'date' => $searchInput->date,
             'keyword' => $searchInput->keyword,
         ]);

@@ -10,32 +10,31 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SearchController
 {
-    private ReadEventRepository $repository;
-    private EventRepository $eventRepository;
-    private SerializerInterface $serializer;
-
     public function __construct(
-        ReadEventRepository $repository,
-        EventRepository $eventRepository,
-        SerializerInterface  $serializer
+        private EventRepository $eventRepository,
+        private ReadEventRepository $repository,
+        private SerializerInterface $serializer,
     ) {
-        $this->repository = $repository;
-        $this->eventRepository = $eventRepository;
-        $this->serializer = $serializer;
     }
 
     #[Route('/api/search', name: 'api_search', methods: ['GET'])]
     public function searchCommits(Request $request): JsonResponse
     {
+        \assert($this->serializer instanceof NormalizerInterface);
+        \assert($this->serializer instanceof DenormalizerInterface);
+
         try {
             $search = $this->serializer->denormalize($request->query->all(), SearchInput::class);
         } catch (\Exception $exception) {
-            throw new NotFoundHttpException('No search provided.');
+            throw new NotFoundHttpException('No search provided.', $exception);
         }
 
         $countByType = $this->eventRepository->countByType($search->date, $search->keyword);
@@ -51,7 +50,7 @@ class SearchController
             ],
             'data' => [
                 'events' => $this->serializer->normalize($latest),
-                //'stats' => $this->repository->statsByTypePerHour($seach)
+                //'stats' => $this->repository->statsByTypePerHour($search)
             ]
         ]);
     }

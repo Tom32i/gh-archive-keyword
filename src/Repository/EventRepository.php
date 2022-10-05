@@ -14,7 +14,7 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
-    public function persist(Event $event, bool $flush = false)
+    public function persist(Event $event, bool $flush = false): void
     {
         $this->getEntityManager()->persist($event);
 
@@ -25,10 +25,10 @@ class EventRepository extends ServiceEntityRepository
 
     public function countAll(\DateTimeInterface $date, string $keyword): int
     {
-        return $this->getQueryBuilder($date, $keyword)
+        return intval($this->getQueryBuilder($date, $keyword)
             ->select('SUM(event.count) as count')
             ->getQuery()
-            ->getSingleScalarResult() ?? 0;
+            ->getSingleScalarResult());
     }
 
     public function countByType(\DateTimeInterface $date, string $keyword): array
@@ -45,6 +45,9 @@ class EventRepository extends ServiceEntityRepository
         );
     }
 
+    /**
+     * @return Event[]
+     */
     public function getLatest(\DateTimeInterface $date, string $keyword): array
     {
         return $this->getQueryBuilder($date, $keyword)
@@ -52,6 +55,16 @@ class EventRepository extends ServiceEntityRepository
             ->join('event.repo', 'repo')
             ->getQuery()
             ->getResult();
+    }
+
+    public function exists(int $id): bool
+    {
+        return $this->createQueryBuilder('event')
+            ->select('count(event.id)')
+            ->where('event.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getSingleScalarResult() === 1;
     }
 
     public function getQueryBuilder(\DateTimeInterface $date, string $keyword): QueryBuilder

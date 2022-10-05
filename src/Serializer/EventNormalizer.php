@@ -18,19 +18,23 @@ class EventNormalizer implements NormalizerInterface, NormalizerAwareInterface
 
     public function normalize(mixed $object, string $format = null, array $context = []): array
     {
+        if (!is_object($object) || !is_a($object, Event::class)) {
+            throw new \Exception("Variable \$object must be an Event.");
+        }
+
         return [
-            'id' => $object->id(),
-            'type' => $object->type(),
+            'id' => $object->getId(),
+            'type' => $object->getType(),
             //'actor' => $this->normalizer->normalize($object->actor()),
-            'repo' => $this->normalizer->normalize($object->repo()),
+            'repo' => $this->normalizer->normalize($object->getRepo()),
             //'payload' => $object->payload(),
-            'createAt' => $object->createAt()->format('c'),
+            'createAt' => $object->getCreateAt()->format('c'),
             'comment' => $object->getComment(),
         ];
     }
 
     public function supportsNormalization(mixed $data, string $format = null, array $context = []): bool
     {
-        return is_a($data, Event::class);
+        return is_object($data) && is_a($data, Event::class);
     }
 }

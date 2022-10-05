@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\RepoRepository;
 
 #[ORM\Entity(repositoryClass: RepoRepository::class)]
 #[ORM\Table()]
@@ -17,10 +18,10 @@ class Repo
     private int $id;
 
     #[ORM\Column(type: Types::STRING)]
-    public string $name;
+    private string $name;
 
     #[ORM\Column(type: Types::STRING)]
-    public string $url;
+    private string $url;
 
     public function __construct(int $id, string $name, string $url)
     {
@@ -29,17 +30,17 @@ class Repo
         $this->url = $url;
     }
 
-    public function id(): int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function name(): string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function url(): string
+    public function getUrl(): string
     {
         return $this->url;
     }

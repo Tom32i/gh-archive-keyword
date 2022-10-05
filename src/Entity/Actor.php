@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Repository\ActorRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -14,16 +15,16 @@ class Actor
     #[ORM\Id]
     #[ORM\Column(type: Types::BIGINT)]
     #[ORM\GeneratedValue(strategy: 'NONE')]
-    public int $id;
+    private int $id;
 
     #[ORM\Column(type: Types::STRING)]
-    public string $login;
+    private string $login;
 
     #[ORM\Column(type: Types::STRING)]
-    public string $url;
+    private string $url;
 
     #[ORM\Column(type: Types::STRING)]
-    public string $avatarUrl;
+    private string $avatarUrl;
 
     public function __construct(int $id, string $login, string $url, string $avatarUrl)
     {
@@ -33,23 +34,23 @@ class Actor
         $this->avatarUrl = $avatarUrl;
     }
 
-    public function id(): int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function login(): string
+    public function getLogin(): string
     {
         return $this->login;
     }
 
 
-    public function url(): string
+    public function getUrl(): string
     {
         return $this->url;
     }
 
-    public function avatarUrl(): string
+    public function getAvatarUrl(): string
     {
         return $this->avatarUrl;
     }

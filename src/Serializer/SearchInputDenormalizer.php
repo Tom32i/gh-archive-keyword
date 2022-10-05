@@ -9,8 +9,12 @@ class SearchInputDenormalizer implements DenormalizerInterface
 {
     public function denormalize(mixed $data, string $type, string $format = null, array $context = [])
     {
+        if (!is_array($data)) {
+            throw new \Exception('Expected array.');
+        }
+
         return new SearchInput(
-            new \DateTimeImmutable($data['date']),
+            new \DateTimeImmutable((string) $data['date']),
             (string) $data['keyword'],
         );
     }

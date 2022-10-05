@@ -9,6 +9,10 @@ class ActorDenormalizer implements DenormalizerInterface
 {
     public function denormalize(mixed $data, string $type, string $format = null, array $context = []): mixed
     {
+        if (!is_array($data)) {
+            throw new \Exception('Expected array.');
+        }
+
         return new Actor(
             (int) $data['id'],
             $data['login'],

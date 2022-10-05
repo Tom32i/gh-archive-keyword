@@ -65,32 +65,32 @@ class Event
         }
     }
 
-    public function id(): int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function type(): string
+    public function getType(): string
     {
         return $this->type;
     }
 
-    public function actor(): Actor
+    public function getActor(): Actor
     {
         return $this->actor;
     }
 
-    public function repo(): Repo
+    public function getRepo(): Repo
     {
         return $this->repo;
     }
 
-    public function payload(): array
+    public function getPayload(): array
     {
         return $this->payload;
     }
 
-    public function createAt(): \DateTimeImmutable
+    public function getCreateAt(): \DateTimeImmutable
     {
         return $this->createAt;
     }

@@ -25,15 +25,13 @@ class EventDenormalizer implements DenormalizerInterface, DenormalizerAwareInter
 
     public function denormalize(mixed $data, string $type, string $format = null, array $context = []): mixed
     {
-        $type = EventType::getFromGHArchive($data['type']);
-
-        if ($type === null) {
-            return null;
+        if (!is_array($data)) {
+            throw new \Exception('Expected array.');
         }
 
         return new Event(
             (int) $data['id'],
-            $type,
+            EventType::getFromGHArchive($data['type']),
             $this->getActor($data['actor']),
             $this->getRepo($data['repo']),
             $data['payload'],
@@ -48,7 +46,7 @@ class EventDenormalizer implements DenormalizerInterface, DenormalizerAwareInter
 
     private function getActor(array $data): Actor
     {
-        $actor = $this->actorRepository->findOneById($data['id']);
+        $actor = $this->actorRepository->find($data['id']);
 
         if ($actor !== null) {
             return $actor;
@@ -59,7 +57,7 @@ class EventDenormalizer implements DenormalizerInterface, DenormalizerAwareInter
 
     private function getRepo(array $data): Repo
     {
-        $repo = $this->repoRepository->findOneById($data['id']);
+        $repo = $this->repoRepository->find($data['id']);
 
         if ($repo !== null) {
             return $repo;
