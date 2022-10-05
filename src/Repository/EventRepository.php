@@ -57,8 +57,8 @@ class EventRepository extends ServiceEntityRepository
     public function getQueryBuilder(\DateTimeInterface $date, string $keyword): QueryBuilder
     {
         return $this->createQueryBuilder('event')
-            ->where('DATE(event.createAt) = :date')
-            ->andWhere('event.payload like :keyword')
+            ->andWhere('DATE(event.createAt) = :date')
+            ->andWhere('CAST(event.payload AS TEXT) LIKE :keyword')
             ->setParameter('date', $date->format('Y-m-d'))
             ->setParameter('keyword', "%$keyword%");
     }

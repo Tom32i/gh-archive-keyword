@@ -21,6 +21,7 @@ doctrine:
         dql:
             string_functions:
                 DATE: DoctrineExtensions\Query\Mysql\Date
+                CAST: DoctrineExtensions\Query\Mysql\Cast
 
 when@test:
     doctrine:
