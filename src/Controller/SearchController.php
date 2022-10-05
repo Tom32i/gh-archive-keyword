@@ -24,7 +24,7 @@ class SearchController
     ) {
     }
 
-    #[Route('/api/search', name: 'api_search', methods: ['GET'])]
+    #[Route('/api/search', name: 'api_search', methods: ['GET'], format: 'json' )]
     public function searchCommits(Request $request): JsonResponse
     {
         \assert($this->serializer instanceof NormalizerInterface);

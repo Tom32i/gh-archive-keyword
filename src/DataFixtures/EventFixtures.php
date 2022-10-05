@@ -32,7 +32,7 @@ class EventFixtures extends Fixture
                 'https://api.github.com/repos/yousign/backend-test'
             ),
             ['foo' => 'bar'],
-            new \DateTimeImmutable(),
+            new \DateTimeImmutable('2015-01-01 09:00:00'),
             'Test comment initiate by fixture '
         );
 
